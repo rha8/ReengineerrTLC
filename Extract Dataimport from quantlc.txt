@@ -1,0 +1,114 @@
+In ui.R
+
+tabPanel("Input and preprocessing",
+                       tags$head(tags$style(HTML(".shiny-output-error-validation {color: red;font-size: 24px}"))),
+                       useShinyalert(),
+                       sidebarLayout(
+                         sidebarPanel(width=3,
+                                      # h3("Input"),
+
+                                      fileInput("Input_image","Select a chromatogram image or a Rdata file"),
+                                     
+
+				      selectInput("Demo_file","Select a demonstration file",choices = c("None",dir("www",pattern = ".Rdata")),selected="None"),
+                                      # fileInput("Input_method","Rdata method file save in a previous session"),
+                                      rHandsontableOutput("Input_dimension"),
+                                      checkboxInput("Input_convention","Change to distance calculated from the middle of the band",F),
+                                      checkboxInput("Input_double","Development from both sides",F),
+                                      bsTooltip("Input_double","By convention, the first application will be taken from the top right side to obtain the same number of bands on each side."),
+                                      actionButton("Input_action","Extract the video densitograms",icon=icon("flask"))
+
+                         ),
+
+This plots the image with the extraction lines: 
+
+                         mainPanel(width=9,
+                                   plotOutput("Input_plot_raster",click = "Input_plot_raster_click",dblclick = "Input_plot_raster_dblclick"),
+                                   bsTooltip("Input_plot_raster","Once the number of band, band length and edge cut is set, click in the middle of the first band and of the last band to calculate automatically the first application position and distance between tracks.")
+                         )
+
+
+bsTooltip("Input_double","By convention, the first application will be taken from the top right side to obtain the same number of bands on each side."),
+
+
+In server.R
+
+plotOutput:
+Input_plot_raster
+Input_plot_raster_click
+Input_plot_raster_dblclick
+
+
+Input_plot_raster
+
+
+
+  output$downloadCheckpoint <- downloadHandler(
+    filename = "quanTLC.Rdata",
+    content = function(con) {
+      assign('data',list(image = reac$image,
+                         image.name = reac$image.name,
+                         batch = reac$batch,
+                         dimension = reac$dimension,
+                         convention=reac$convention,
+                         double = reac$double,
+                         nbr.band=reac$nbr.band,
+                         extracted = reac$extracted,
+                         Preprocess.order = reac$Preprocess.order,
+                         Preprocess.options = reac$Preprocess.options,
+                         preprocessed = reac$preprocessed,
+                         Integration = reac$Integration,
+                         model=reac$model
+      ))
+      save(list='data',file=con)
+    }
+  )
+  observeEvent(input$Input_image,{
+    if(grepl("Rdata",input$Input_image$name)){
+      load(input$Input_image$datapath)
+      reac$image = data$image
+      reac$image.name = data$image.name
+      reac$batch = data$batch
+      reac$dimension = data$dimension
+      if(!is.null(data$convention)){reac$convention=data$convention}
+      if(!is.null(data$double)){reac$double=data$double}
+      if(!is.null(data$nbr.band)){reac$nbr.band = data$nbr.band}
+      reac$extracted = data$extracted
+      reac$Preprocess.order = data$Preprocess.order
+      reac$Preprocess.options = data$Preprocess.options
+      reac$preprocessed = data$preprocessed
+      if(!is.null(reac$Integration)){
+        reac$Integration = data$Integration
+      }else{
+        reac$Integration = list(PeakList = data.frame())
+        shinyalert("Warning!", "Rdata file from a previous version, integration not saved.", type = "warning", closeOnEsc = TRUE,closeOnClickOutside = TRUE)
+      }
+      updateCheckboxInput(session,"Input_convention",value=reac$convention)
+      updateCheckboxInput(session,"Input_double",value=reac$double)
+      reac$model=data$model
+
+
+----------------------------------------
+Track plot: 
+
+choice.band.mono.bef.1
+plot.v.mono.bef.1
+
+choice.band.mono.bef.2
+plot.v.mono.bef.2
+
+In
+f.plot.array()
+f.plot.array(data,n.band,names(Truc.mono()),input$hauteur.mono,input$Zf.mono,input$dist.bas.mono,inverse=MAC.inverse,cex=1.5)
+n.band,names(Truc.mono())
+Truc.mono()
+
+input$hauteur.mono
+input$Zf.mono
+input$dist.bas.mono
+
+
+
+
+
+

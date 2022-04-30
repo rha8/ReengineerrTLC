@@ -1,0 +1,100 @@
+conditionalPanel(condition = "input.filedemouse == 'YourOwnData' | input.filedemouse == 'QC'",
+                                                 tags$hr(),
+                                                 h4("Upload"),
+                                                 fileInput('fileX', 'Choice of the batch '),
+                                                 selectizeInput("mono.Format.type","Select the image format",choices=c("jpeg","png","tiff"),selected="jpeg"),
+                                                 fileInput('filemonop', 'Choice of the plate file(s)',multiple=T)
+                                ),
+
+
+-> whatis:
+
+fileX
+
+mono.Format.type
+
+
+filemonop 
+
+-----
+ui.r
+-----
+plotOutput()
+Render a renderPlot within an application page.
+
+
+
+-----
+server.r
+-----
+
+downloadHandler()
+
+
+reactive()
+Wraps a normal expression to create a reactive expression. Conceptually, a reactive expression is a expression whose result will change over time.
+
+observe()
+Creates an observer from the given expression.
+
+validate()
+
+
+sliderInput()
+
+
+rasterImage()
+
+
+renderUI()
+
+
+renderImage()
+
+
+renderDataTable()
+
+
+renderPrint()
+
+
+renderText()
+Makes a reactive version of the given function that also uses cat to turn its result into a single-element character vector.
+
+renderTable()
+
+
+eventReactive()
+
+
+withProgress()
+
+
+radioButtons()
+Create a set of radio buttons used to select an item from a list.
+
+
+-----------
+This is needed for: 
+Trackplot, chromatogram comparison, densitogram comparison, image reconstruction, prediction (QC)
+Data preprocessing, variables selection, etc. ...
+
+     tabPanel("Batch",
+                                                  column(3,
+                                                         hr(),
+                                                         uiOutput('batch.Truc.mono'),
+                                                         h4('Column filter: Keep only selected, if none, keep all.'),
+                                                         uiOutput('batch.filter')),
+                                                  column(9,hr(),tableOutput("table1"))
+                                         ),
+
+
+
+
+
+
+
+
+
+
+
